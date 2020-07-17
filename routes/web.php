@@ -17,5 +17,17 @@ Route::get('/', function () {
 
 Route::get('/wx/token','TestController@index');
 
+Route::get('/wx/getwxtoken','TestController@getwxtoken');
+
+Route::get('/getwww','TestController@getwww');
+
+
+Route::post('/regpost','RegController@regpost');
+
+Route::post('/loginpost','RegController@loginpost');
+
+
+
+
 
 
