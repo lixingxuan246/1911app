@@ -21,11 +21,13 @@ Route::get('/wx/getwxtoken','TestController@getwxtoken');
 
 Route::get('/getwww','TestController@getwww');
 
+Route::get('/kkk','RegController@kkk');
 
 Route::post('/regpost','RegController@regpost');
 
 Route::post('/loginpost','RegController@loginpost');
 
+Route::get('/center','RegController@center');
 
 
 
