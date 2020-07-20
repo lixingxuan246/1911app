@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\GoodsModel;
+use Illuminate\Support\Facades\Redis;
 
 class TestController extends Controller
 {
@@ -30,6 +32,32 @@ class TestController extends Controller
         echo $response;
     }
 
+
+    /*
+     * 商品
+     * */
+    public function goods(){
+        $goods_id = request()->get('goods_id');
+//        $goodsinfo = GoodsModel::select('goods_id')->where('goods_id',$goods_id)->first();
+        $key =  'good_count'.$goods_id;
+        $redis_count = Redis::hget($key,'data');
+        if(empty($redis_count)){
+            $goodsinfo = GoodsModel::select('goods_id','cat_id','goods_name','shop_price')->where('goods_id',$goods_id)->first();
+            $data = $goodsinfo->toArray();
+            Redis::hset($key,'data',$data);
+            echo '正在缓存';
+        }else{
+            echo '已经缓存';
+            $count = Redis::incr('good-'.$goods_id);
+            echo '访问次数：'. $count;
+            echo '<br>';
+            echo date('Ymd');
+        }
+
+
+
+
+    }
 
 
 
