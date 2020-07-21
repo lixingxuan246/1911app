@@ -102,9 +102,7 @@ class RegController extends Controller
     public function center(){
         //验证token是否存在
         $token = request()->get('token');
-
-
-
+        //查看token有没有在黑名单中
         $sismember = Redis::sismember('xuan',$token);
         if($sismember == 1){
             $data = [
@@ -120,22 +118,21 @@ class RegController extends Controller
             ];
             return $data;
         }
-
         $res = TokenController::where(['token'=>$token])->first();
-
         if($res){
 
             $userinfo = UserModel::where(['uid'=>$res->uid])->first();
-
-
-
+            //获取timein
             $time = Redis::get('timein');
+            //判断有没有timein  ，没有的话去获取，有了判断访问次数
             if($time){
+                //访问次数
                 $count = Redis::incr('count');
+                //访问次数设置过期时间
                 Redis::expire('count',20);
 
                 if($count>4){
-
+                    //访问次数过多，加入黑名单，设置过期时间
                     $sets = Redis::sadd('xuan',$token);
                     Redis::expire('xuan',40);
                     $data = [
@@ -143,12 +140,6 @@ class RegController extends Controller
                         'msg' => '你的访问次数太频繁了',
                     ];
                     return $data;
-
-
-
-
-
-
                 }else{
                     $data = [
                         'error' => '00000',
@@ -159,6 +150,7 @@ class RegController extends Controller
                     return $data;
                 }
             }else{
+                //存入当前时间   设置过期时间
                 $timein =  Redis::set('timein',time());
                 Redis::expire('timein',20);
 
@@ -182,16 +174,17 @@ class RegController extends Controller
 
 
     public function kucun(){
-        $redis  = Redis::lpush(1,2,3,4,5,4,3,2,1);
-
+        echo 'ok';
+//        $redis  = Redis::lpush(1,2,3,4,5,4,3,2,1);
 
     }
 
     public function qiandao(){
         //签到
         $user_id = request()->get('user_id');
-        $key2 = $user_id.'--qiandao';
         $score = date('Ymd');
+        $key2 = $user_id.'--qiandao'.$score;
+
         $zcard = Redis::zcard($key2);
         if($zcard>0){
             $data = [

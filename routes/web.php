@@ -28,11 +28,11 @@ Route::post('/regpost','RegController@regpost');
 
 Route::post('/loginpost','RegController@loginpost');
 
-Route::get('/center','RegController@center');
+Route::get('/center','RegController@center')->middleware('accesstoken');
 Route::get('/apiredis','RegController@apiredis');
 
 
-Route::get('/kucun','RegController@kucun');
-Route::get('/qiandao','RegController@qiandao');
+Route::get('/kucun','RegController@kucun')->middleware('accesstoken');
+Route::get('/qiandao','RegController@qiandao')->middleware('accesstoken');
 
 
